@@ -126,7 +126,7 @@ int Program(){          //<程序> --> <变量说明>BEGIN<语句表>END.
 
 int Procedure(){            //分程序
     if(dual[index].dual_type != BEGIN && dual[index].dual_type != VAR){
-        printf("line %d: error_type[b]: 程序缺少语句段关键字 'BEGIN' 或者 'VAR' 变量定义",dual[index].x);
+        printf("line %d: 程序缺少语句段关键字 'BEGIN' 或者 'VAR' 变量定义",dual[index].x);
         return 1;
     }
     else if(dual[index].dual_type == VAR){
@@ -183,7 +183,7 @@ int Var_table(){       //变量说明表
 
 int Var_list(){        //变量表
     if(dual[index].dual_type != ID && dual[index].dual_type != SEMICOLON){
-        printf("error1:违背产生式：<变量表>-><变量>|<变量>,<变量表>\n\n");
+        printf("line %d: 变量定义格式错误\n");
         return 1;
     }
     else if (dual[index].dual_type == ID){
