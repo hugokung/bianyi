@@ -152,6 +152,9 @@ int Scanner()
                     dual[pos].dual_type = PROGRAM;
                 }
             }
+            if(strcmp(dual[pos].lexme.lexme_text,"program")==0){
+                dual[pos].dual_type = PROGRAM;
+            }
             string tmp = dual[pos].lexme.lexme_text;
             if(key_word[tmp]!=0){                           //判断是否是保留字
                 dual[pos].dual_type = key_word[tmp];
