@@ -327,7 +327,7 @@ int Condition(){
     char *tmp;
     int FC, tmp1,tmp2;
     tmp = (char*)malloc(12);
-    FC = Relation();
+    FC = Relation();                //返回假出口的四元式的编号
 
     if(error_occur == 1) return 1;
 
@@ -337,12 +337,12 @@ int Condition(){
         if(Singel_stament()==1){
             return 1;
         }
-        Gen("jumpto","_","_","");
-        tmp2 = NXQ -1;
         if(dual[index].dual_type == ELSE){
+            Gen("jumpto","_","_","");
+            tmp2 = NXQ -1;
             printf("ELSE\n");
             index++;
-            tmp1 = NXQ + 1;
+            tmp1 = NXQ;
             itoa(tmp1,tmp,10);
             strcpy(four[FC].res,tmp);
 
@@ -370,9 +370,9 @@ int Whiled(){
     char *tmp;
     int FC,tmp1,tmp2;
     tmp = (char*) malloc(12);
-    tmp2 = NXQ;
+    tmp2 = NXQ;                             //循环条件的四元式标号
 
-    FC = Relation();
+    FC = Relation();                        //假出口的四元式的标号
     if(error_occur == 1 ) return 1;        //关系表示式出错返回
 
 
@@ -442,9 +442,9 @@ int Relation(){
 
             temp = NXQ+2;
             itoa(temp, TC, 10);
-            Gen(op,lnum,rnum,TC);
+            Gen(op,lnum,rnum,TC);               //真出口
             FC = NXQ;
-            Gen("jumpto","_","_","");
+            Gen("jumpto","_","_","");           //假出口
         }
         else{
             printf("line %d: 违背产生式：<关系表达式>-><算术表达式><关系符><算术表达式>\n",dual[index].x);
