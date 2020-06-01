@@ -76,19 +76,20 @@ int main()
 {
     int lex_res = Scanner();
     if(lex_res!=0){
-        printf("%d errors in lexical\n",lex_res);
+        printf("----------<%d个词法错误>---------\n",lex_res);
     }
     else{
-        printf("lexical compiled successfully\n");
+        printf("----------<词法分析成功>----------\n\n");
         int syn_res = Program();
         if(syn_res == 1){
-            printf("syntax compiled failed!\n");
+            printf("----------<发现语法错误>----------\n\n");
         }
         else{
+            printf("----------<语法分析成功>----------\n\n");
+            printf("----------<输出四元式>----------\n");
             for(int i=0;i<NXQ;i++){
-                printf("%d: (%s %s %s %s)\n",i,four[i].op,four[i].ag1,four[i].ag2,four[i].res);
+                printf("%d:  (%s , %s , %s , %s)\n",i,four[i].op,four[i].ag1,four[i].ag2,four[i].res);
             }
-            printf("syntax compiled successfully\n");
         }
     }
     return 0;
@@ -107,17 +108,17 @@ int Program(){          //<程序> --> <变量说明>BEGIN<语句表>END.
                 return Procedure();
             }
             else{
-                printf("line %d: lack of ;\n",dual[index].x);
+                printf("line %d: 缺少 ';'\n",dual[index].x);
                 return 1;
             }
         }
         else{
-            printf("line %d: lack of program name\n",dual[index].x);
+            printf("line %d: 缺少程序名\n",dual[index].x);
             return 1;
         }
     }
     else{
-        printf("line %d: lack of key word 'PROGRAM'\n",dual[index].x);
+        printf("line %d: 缺少关键字 'PROGRAM'\n",dual[index].x);
         return 1;
     }
 }
@@ -125,7 +126,7 @@ int Program(){          //<程序> --> <变量说明>BEGIN<语句表>END.
 
 int Procedure(){            //分程序
     if(dual[index].dual_type != BEGIN && dual[index].dual_type != VAR){
-        printf("line %d: error_type[b]: 程序缺少语句段关键字BEGIN或者VAR变量定义",dual[index].x);
+        printf("line %d: error_type[b]: 程序缺少语句段关键字 'BEGIN' 或者 'VAR' 变量定义",dual[index].x);
         return 1;
     }
     else if(dual[index].dual_type == VAR){
@@ -159,7 +160,7 @@ int Var_table(){       //变量说明表
                     }
                 }
                 else{
-                    printf("2error:违背产生式：<变量说明>->VAR<变量说明表>;\n");
+                    printf("line %d: 缺少分号\n",dual[index].x);
                     return 1;
                 }
             }
@@ -169,7 +170,7 @@ int Var_table(){       //变量说明表
             }
         }
         else{
-            printf("4error:违背产生式：<变量说明表>-><变量表>：<类型>|<变量表>：<类型>;<变量说明表>\n\n");
+            printf("line %d: 缺少冒号\n",dual[index].x);
             return 1;
         }
     }
@@ -194,7 +195,7 @@ int Var_list(){        //变量表
                 index++;
             }
             else{
-                printf("line %d: error2:逗号后不是标识符 \n 违背产生式：<变量表>-><变量>|<变量>,<变量表>\n\n",dual[index].x);
+                printf("line %d: 逗号后不是标识符\n",dual[index].x);
                 return 1;
             }
         }
@@ -212,23 +213,23 @@ int Statement_list(){       //语句表
             if(dual[index].dual_type == POINT){
                 index++;
                 if(index == total_size){
-                    printf("compiled successfully !!!\n");
+                    printf("----------<语法分析结束>----------\n");
                     return 0;
                 }
                 else{
-                    printf("line %d: error3: -->违背产生式：<分程序>-><变量说明>BEGIN<语句表>END.\n",dual[index].x);
+                    printf("line %d: 程序结尾不明字符错误\n",dual[index].x);
                     return 1;
                 }
             }
             else
             {
                 printf("%d %s\n",index,dual[index].lexme.lexme_text);
-                printf("line %d: error2:缺少分隔符.-->违背产生式：<分程序>-><变量说明>BEGIN<语句表>END.\n",dual[index].x);
+                printf("line %d: END后缺少分隔符 '.'\n",dual[index].x);
                 return 1;
             }
         }
         else{
-            printf("line %d: error3:lack END -->违背产生式：<分程序>-><变量说明>BEGIN<语句表>END.\n",dual[index].x);
+            printf("line %d: 程序段缺少关键字 'END'\n",dual[index].x);
             return 1;
         }
     }
@@ -247,7 +248,7 @@ int Statement(){            //语句
             if(is_error==1) return 1;
         }
         if(dual[index].dual_type != END){
-            printf("line %d: error1:缺少分号；-->违背产生式：<语句表>-><语句>|<语句>;<语句表>\n",dual[index].x);
+            printf("line %d: 程序段缺少关键字 'END'\n",dual[index].x);
             return 1;
         }
         else return 0;
@@ -296,11 +297,11 @@ int Singel_stament(){       //单条语句
         return Compound();
     }
     else if(dual[index].dual_type == END){
-        printf("line %d: error1:end前不可有分号；-->违背产生式：<语句>-><语句>|<语句>;<语句表>\n",dual[index].x);
+        printf("line %d: 'END'前不可有 ';'\n",dual[index].x);
         return 1;
     }
     else{
-        printf("line %d: 语句错误！-->违背产生式：<语句>-><赋值语句>|<条件语句>|<WHILE语句>|<复合语句>\n",dual[index].x);
+        printf("line %d: 语法错误！\n",dual[index].x);
         return 1;
     }
     return 0;
@@ -311,7 +312,7 @@ int Compound(){
     int syn_tpye = Statement();
     if(syn_tpye == 0){
         if(dual[index].dual_type != END){
-            printf("line %d: 复合语句错误\n",dual[index].x);
+            printf("line %d: 复合语句错误,缺少关键字 'END'\n",dual[index].x);
             return 1;
         }
         else index++;
@@ -447,7 +448,7 @@ int Relation(){
             Gen("jumpto","_","_","");           //假出口
         }
         else{
-            printf("line %d: 违背产生式：<关系表达式>-><算术表达式><关系符><算术表达式>\n",dual[index].x);
+            printf("line %d: 关系比较符错误! \n",dual[index].x);
             //return 1;
         }
     }
@@ -557,7 +558,7 @@ char* Factor(){
     }
     else{
         // printf("%d %s\n",index,dual[index].lexme.lexme_text);
-        printf("line %d: 违背产生式：<因式>-><变量>|常数|（<算术表达式>）\n",dual[index].x);
+        printf("line %d: 表达式格式错误！\n",dual[index].x);
 
         error_occur = 1;
     }
