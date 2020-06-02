@@ -344,14 +344,16 @@ int Condition(){
             printf("ELSE\n");
             index++;
             tmp1 = NXQ;
-            itoa(tmp1,tmp,10);
+            // itoa(tmp1,tmp,10);
+            sprintf(tmp,"%d",tmp1);
             strcpy(four[FC].res,tmp);
 
             if(Singel_stament()==1){
                 return 1;
             }
             tmp1 = NXQ;
-            itoa(tmp1, tmp, 10);
+            // itoa(tmp1, tmp, 10);
+            sprintf(tmp,"%d",tmp1);
             strcpy(four[tmp2].res, tmp);
         }
         else{
@@ -385,11 +387,13 @@ int Whiled(){
             return 1;
         }
 
-        itoa(tmp2,tmp,10);
+        // itoa(tmp2,tmp,10);
+        sprintf(tmp,"%d",tmp2);
         Gen("jumpto","_","_",tmp);
 
         tmp1 = NXQ;
-        itoa(tmp1,tmp,10);
+        // itoa(tmp1,tmp,10);
+        sprintf(tmp,"%d",tmp1);
         strcpy(four[FC].res,tmp);
     }
     else{
@@ -442,7 +446,8 @@ int Relation(){
 
 
             temp = NXQ+2;
-            itoa(temp, TC, 10);
+            // itoa(temp, TC, 10);
+            sprintf(TC,"%d",temp);
             Gen(op,lnum,rnum,TC);               //真出口
             FC = NXQ;
             Gen("jumpto","_","_","");           //假出口
@@ -581,7 +586,8 @@ char* NewTemp(){
     char a[8];
     newtmp = (char*) malloc(8);
     tmp_id++;
-    itoa(tmp_id,a,10);
+    // itoa(tmp_id,a,10);
+    sprintf(a,"%d",tmp_id);
     strcpy(newtmp+1,a);
     newtmp[0]='T';
     return newtmp;
