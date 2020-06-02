@@ -18,7 +18,39 @@
 <复合语句>—>BEGIN<语句表>END  
 <算术表达式>—><项>{+ <项>| - <项>}  
 <项>—><因式>{* <因式>|/<因式>}  
-<因式>—><变量>|<常数>| <算术表达式>  
+<因式>—><变量>|<常数>| (<算术表达式>)  
 <关系表达式>—><算术表达式><关系符><算术表达式>  
 <变量>—><标识符>  
 <标识符>—><字母>{<数字>|<字母>}
+
+## First集
+
+first(<程序>) = {'PROGRAM'}  
+first(<分程序>) = {'VAR'}  
+first(<变量说明>) = {'VAR'}  
+first(<变量说明表>) = {字母}  
+first(<类型>) = {'INTEGER'}  
+first(<变量表>) = {字母}  
+
+First(<语句表>)={字母，IF，While，BEGIN}  
+First(<语句>)={字母，IF，While，BEGIN}  
+First(<赋值语句>)={字母}  
+First(<条件语句>)={IF}  
+First(<While语句>)={While}  
+First(<复合语句>)={BEGIN}  
+
+## Follow集
+
+follow(<程序>) = {#}  
+follow(<分程序>) = {#}  
+follow(<变量说明>) = {#}  
+follow(<变量说明表>) = {#}  
+follow(<类型>) = {#}  
+follow(<变量表>) = {#}  
+
+Follow(<语句表>)={'END',#}  
+Follow(<语句>)={'ELSE',# }  
+Follow(<赋值语句>)={#}  
+Follow(<条件语句>)={#}  
+Follow(<while语句>)={#}  
+Follow(<复合语句>)={#}  
