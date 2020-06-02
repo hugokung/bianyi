@@ -173,7 +173,7 @@ int Scanner()
                 string tmp = dual[pos].lexme.lexme_text;
                 if(var_table[tmp]==0) dual[pos].dual_type = UNDEFINE_VAR;
             }
-            
+            word_type = dual[pos].dual_type;
             switch (word_type)                              //输出分析信息
             {
             case ERROR_WORD:

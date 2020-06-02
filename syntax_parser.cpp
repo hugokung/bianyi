@@ -248,7 +248,7 @@ int Statement(){
             if(is_error==1) return 1;
         }
         if(dual[index].dual_type != END){
-            printf("line %d: 程序段缺少关键字 'END'\n",dual[index].x);
+            printf("line %d: 程序段缺少 ';'\n",dual[index].x);
             return 1;
         }
         else return 0;
