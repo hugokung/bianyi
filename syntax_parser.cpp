@@ -123,7 +123,7 @@ int Program(){          //<程序> --> <变量说明>BEGIN<语句表>END.
     }
 }
 
-
+//<分程序>—><变量说明>BEGIN<语句表>END.
 int Procedure(){            //分程序
     if(dual[index].dual_type != BEGIN && dual[index].dual_type != VAR){
         printf("line %d: 程序缺少语句段关键字 'BEGIN' 或者 'VAR' 变量定义",dual[index].x);
@@ -139,7 +139,7 @@ int Procedure(){            //分程序
     }
 }
 
-
+//<变量说明>—>VAR<变量说明表>
 int Var_table(){       //变量说明表
     int syn_type = Var_list();
     if(syn_type == 0){
@@ -180,7 +180,7 @@ int Var_table(){       //变量说明表
     return 0;
 }
 
-
+//<变量说明表>—><变量表>:<类型>{;<变量说明表>}
 int Var_list(){        //变量表
     if(dual[index].dual_type != ID && dual[index].dual_type != SEMICOLON){
         printf("line %d: 变量定义格式错误\n");
@@ -203,7 +203,7 @@ int Var_list(){        //变量表
     return 0;
 }
 
-
+//<语句表>—><语句>{;<语句表>}
 int Statement_list(){       //语句表
     int syn_tpye = Statement();
     if(syn_tpye == 0){
@@ -239,7 +239,7 @@ int Statement_list(){       //语句表
 }
 
 
-int Statement(){            //语句
+int Statement(){            
     int syn_type = Singel_stament();
     if(syn_type==0){
         while(dual[index].dual_type == SEMICOLON){
@@ -258,7 +258,7 @@ int Statement(){            //语句
     }
 }
 
-
+//<语句>—><赋值语句>|<条件语句>|<WHILE语句>|<复合语句>
 int Singel_stament(){       //单条语句
     char *lnum ,*rnum;      //分别保存赋值符的左右操作数
 
@@ -307,7 +307,7 @@ int Singel_stament(){       //单条语句
     return 0;
 }
 
-
+//<复合语句>—>BEGIN<语句表>END
 int Compound(){
     int syn_tpye = Statement();
     if(syn_tpye == 0){
@@ -323,7 +323,7 @@ int Compound(){
     return 0;
 }
 
-
+//<条件语句>—>IF<关系表达式>THEN<语句>ELSE<语句>
 int Condition(){
     char *tmp;
     int FC, tmp1,tmp2;
@@ -366,7 +366,7 @@ int Condition(){
     return 0;
 }
 
-
+//<WHILE语句>—>WHILE<关系表达式>DO<语句>
 int Whiled(){
     char *tmp;
     int FC,tmp1,tmp2;
@@ -399,7 +399,7 @@ int Whiled(){
     return 0;
 }
 
-
+//<关系表达式>—><算术表达式><关系符><算术表达式> 
 int Relation(){
     char *op, *lnum, *rnum, *TC;
     int temp,FC;
@@ -458,6 +458,7 @@ int Relation(){
 
 
 //算术表达式的分析
+//<算术表达式>—><项>{+ <项>| - <项>}
 char* Expression(){
     char *tmp,*num1,*num2,*op;  //tmp是临时变量，num1,num2为操作数,op为操作符
     tmp = (char*)malloc(12);
@@ -489,7 +490,7 @@ char* Expression(){
     return num1;
 }
 
-
+//<项>—><因式>{* <因式>|/<因式>}
 char* Term(){
     char *tmp,*num1,*num2,*op;  //tmp是临时变量，num1,num2为操作数,op为操作符
     tmp = (char*)malloc(12);
@@ -521,7 +522,7 @@ char* Term(){
     return num1;
 }
 
-
+//<因式>—><变量>|<常数>| <算术表达式>
 char* Factor(){
     char* place;
     place = (char*)malloc(12);
@@ -574,7 +575,7 @@ void Gen(char* op, char* ag1, char* ag2, char* res){        //添加四元组
     NXQ++;
 }
 
-
+//语义分析中产生临时变量
 char* NewTemp(){
     char *newtmp;
     char a[8];
