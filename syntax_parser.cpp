@@ -87,9 +87,12 @@ int main()
         else{
             printf("----------<语法分析成功>----------\n\n");
             printf("----------<输出四元式>----------\n");
+            FILE * wf = fopen("Quaternary.txt","w");
             for(int i=0;i<NXQ;i++){
+                fprintf(wf,"%d:  (%s , %s , %s , %s)\n",i,four[i].op,four[i].ag1,four[i].ag2,four[i].res);
                 printf("%d:  (%s , %s , %s , %s)\n",i,four[i].op,four[i].ag1,four[i].ag2,four[i].res);
             }
+            fclose(wf);
         }
     }
     return 0;
