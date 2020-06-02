@@ -277,7 +277,7 @@ int Singel_stament(){       //单条语句
             return 0;
         }
         else{
-            printf("line %d: 赋值语句错误\n",dual[index].x);
+            printf("line %d: 语句错误\n",dual[index].x);
             return 1;
         }
     }
@@ -293,7 +293,7 @@ int Singel_stament(){       //单条语句
     }
     else if(dual[index].dual_type == BEGIN){
         index++;
-        printf("into compound\n");
+        printf("Compound\n");
         return Compound();
     }
     else if(dual[index].dual_type == END){
