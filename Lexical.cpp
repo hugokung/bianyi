@@ -21,54 +21,52 @@ using namespace std;
 #define THEN 7
 #define ELSE 8
 #define DO 9
-#define EQUAL 10//赋值
-#define PLUS 11
-#define MUL 12
-#define LP 13
-#define RP 14//右括号
-#define LT 15
-#define LE 16
-#define GT 17
-#define GE 18
-#define NE 19
-#define EQ 20//等号
-#define POINT 21//间隔符
-#define COLON 22//冒号
+#define EQUAL 10    //赋值
+#define PLUS 11     //加号
+#define MUL 12      //乘号
+#define LP 13       //左括号
+#define RP 14       //右括号
+#define LT 15       //小于号
+#define LE 16       //小于等于
+#define GT 17       //大于
+#define GE 18       //大于等于
+#define NE 19       //不等号
+#define EQ 20       //等号
+#define POINT 21    //间隔符
+#define COLON 22    //冒号
 #define SEMICOLON 23//分号
-#define COMMA 24//逗号
-#define ID 25//标识符
-#define CONSTANT 26//常数
-#define PROGRAM 27
-#define MINUS 28//减号
-#define DIV 29//除号
-#define N 30//四元式数组大小
-
-#define ERROR_WORD -8
-#define MISMATCH -7
-#define OUT_OF_RANGE -6
-#define OUT_OF_LIMIT_LEN -5
-#define UNDEFINE_VAR -4
+#define COMMA 24    //逗号
+#define ID 25       //标识符
+#define CONSTANT 26 //常数
+#define PROGRAM 27  //
+#define MINUS 28    //减号
+#define DIV 29      //除号
 
 
-char cache[1000][100];
-char program[1000];
-map<string,int> key_word;
-map<string,int> var_table;
-int error_num;
-int V_flag = -1;
-int total_size;
+#define ERROR_WORD -8       //错误单词
+#define MISMATCH -7         //花括号不匹配
+#define OUT_OF_RANGE -6     //超出整数范围
+#define OUT_OF_LIMIT_LEN -5 //标识符长度过长
+#define UNDEFINE_VAR -4     //没有定义变量
+
+
+map<string,int> key_word;   //保存程序里的保留字
+map<string,int> var_table;  //保存用户定义的变量
+int error_num;              //词法错误的个数
+int V_flag = -1;            //标记，判断何时开始记录定义的变量和何时开始判断变量是否被定义
+int total_size;             //总的单词数
 struct DUAL
 {
-    int dual_type;
+    int dual_type;          //单词的类型码
     union
     {
-        char lexme_text[10];
+        char lexme_text[10];    //保存单词本身
         int lexme_num;
     }lexme;
-    int x,y;
+    int x,y;                //横纵坐标
 }dual[1000];
 
-void init()
+void init()                 //初始化
 {
     key_word["BEGIN"]=1;key_word["begin"]=1;
     key_word["END"]=2;key_word["end"]=2;
@@ -80,7 +78,7 @@ void init()
     key_word["ELSE"]=8;key_word["else"]=8;
     key_word["DO"]=9;key_word["do"]=9;
 }
-bool isDelimiter(char s)
+bool isDelimiter(char s)        //判断是否是分界符
 {
     if(s==';'||s==','||s=='+'||s=='-'||s=='('||s==')'||s=='{'||s=='}'||s=='*'||s=='/'||s=='<'||s=='>'||s==':'||s=='.') return true;
     else return false;
@@ -102,7 +100,7 @@ int Scanner()
         char now  = getc(fp);
         if(now == EOF) break;
         bool flag=0;
-        while (now == '\n')
+        while (now == '\n')     //过滤读到的白空格
         {
             flag = 1;
             row++;
@@ -122,13 +120,13 @@ int Scanner()
             dual[pos].lexme.lexme_text[0]=now;
             int index = 1;
             dual[pos].dual_type = ID;
-            if (islower(now))
+            if (islower(now))                           //不允许开头字母小写
             {
                 dual[pos].dual_type = ERROR_WORD;
             }
             now = getc(fp);
             col++;
-            int word_len = 1;
+            int word_len = 1;                           //记录标识符的长度
             while (now != ' '&&now != '\t'&&(!isDelimiter(now))&&now != '\n')
             {
                 dual[pos].lexme.lexme_text[index++] = now;
@@ -145,33 +143,33 @@ int Scanner()
             }
             if(now == '\t') col+=4;
             if(now == ' ') col++;
-            if(isDelimiter(now)) fseek(fp,-1,1);
-            if(dual[pos].dual_type != ERROR_WORD){          //没有错误，先赋值为标识符
+            if(isDelimiter(now)) {fseek(fp,-1,1);col--;}            //如果是分界符则后退一个，留到下一次分析
+            if(dual[pos].dual_type != ERROR_WORD){                  //没有错误，先赋值为标识符
                 dual[pos].dual_type = ID;
                 if(strcmp(dual[pos].lexme.lexme_text,"PROGRAM")==0||strcmp(dual[pos].lexme.lexme_text,"program")==0){
                     dual[pos].dual_type = PROGRAM;
                 }
             }
-            if(strcmp(dual[pos].lexme.lexme_text,"program")==0){
+            if(strcmp(dual[pos].lexme.lexme_text,"program")==0){            //允许保留字program是小写
                 dual[pos].dual_type = PROGRAM;
             }
             string tmp = dual[pos].lexme.lexme_text;
-            if(key_word[tmp]!=0){                           //判断是否是保留字
+            if(key_word[tmp]!=0){                                           //判断是否是保留字
                 dual[pos].dual_type = key_word[tmp];
             }
-            if(word_len > 8){                               //判断是否长度超过规定
+            if(word_len > 8){                                               //判断是否长度超过规定
                 dual[pos].dual_type = OUT_OF_LIMIT_LEN;
             }
             dual[pos].lexme.lexme_text[index] = '\0';
             int word_type = dual[pos].dual_type;
             if(word_type == VAR) V_flag = 1;
             if(word_type == BEGIN) V_flag = 0;
-            if (word_type == ID && V_flag == 1)             //判断变量是否定义过
+            if (word_type == ID && V_flag == 1)                             //记录用户定义了哪些变量
             {
                 string tmp = dual[pos].lexme.lexme_text;
                 var_table[tmp] = 1;
             }
-            else if(word_type == ID && V_flag == 0){
+            else if(word_type == ID && V_flag == 0){                        //判断语句中使用的变量是否定义过
                 string tmp = dual[pos].lexme.lexme_text;
                 if(var_table[tmp]==0) dual[pos].dual_type = UNDEFINE_VAR;
             }
@@ -179,19 +177,19 @@ int Scanner()
             switch (word_type)                              //输出分析信息
             {
             case ERROR_WORD:
-                printf("%s not a legal name. At %d line %d column\n",dual[pos].lexme.lexme_text,dual[pos].x,dual[pos].y);
-                fprintf(msg,"%s not a legal name. At %d line %d column\n",dual[pos].lexme.lexme_text,dual[pos].x,dual[pos].y);
+                printf("Error type[词法错误]: at %d line %d column , %s 不是一个合法的名字.\n",dual[pos].x,dual[pos].y,dual[pos].lexme.lexme_text);
+                fprintf(msg,"Error type[词法错误]: at %d line %d column , %s 不是一个合法的名字.\n",dual[pos].x,dual[pos].y,dual[pos].lexme.lexme_text);
                 error_num++;
                 break;
             case OUT_OF_LIMIT_LEN:
                 error_num++;
-                printf("%s is out of the maximun length. At %d line %d column\n",dual[pos].lexme.lexme_text,dual[pos].x,dual[pos].y);
-                fprintf(msg,"%s is out of the maximun length. At %d line %d column\n",dual[pos].lexme.lexme_text,dual[pos].x,dual[pos].y);
+                printf("Error type[词法错误]: at %d line %d column , %s 名字长度超过了规定\n",dual[pos].x,dual[pos].y,dual[pos].lexme.lexme_text);
+                fprintf(msg,"Error type[词法错误]: at %d line %d column , %s 名字长度超过了规定\n",dual[pos].x,dual[pos].y,dual[pos].lexme.lexme_text);
                 break;
             case UNDEFINE_VAR:
                 error_num++;
-                printf("%s is undefine, at %d line %d column\n",dual[pos].lexme.lexme_text,dual[pos].x,dual[pos].y);
-                fprintf(msg,"%s is undefine, at %d line %d column\n",dual[pos].lexme.lexme_text,dual[pos].x,dual[pos].y);
+                printf("Error type[词法错误]: at %d line %d column , %s 没有被定义\n",dual[pos].x,dual[pos].y,dual[pos].lexme.lexme_text);
+                fprintf(msg,"Error type[词法错误]: at %d line %d column , %s 没有被定义\n",dual[pos].x,dual[pos].y,dual[pos].lexme.lexme_text);
                 break;
             default:
                 printf("(%s , %d),at %d line %d column\n",dual[pos].lexme.lexme_text, dual[pos].dual_type, dual[pos].x,dual[pos].y);
@@ -227,7 +225,7 @@ int Scanner()
             }
             if(now == '\t') col+=4;
             if(now == ' ') col++;
-            if(isDelimiter(now)) fseek(fp,-1,1),col--;
+            if(isDelimiter(now)) {fseek(fp,-1,1);col--;}
 
             dual[pos].lexme.lexme_text[index] = '\0';
 
@@ -248,13 +246,13 @@ int Scanner()
             {
             case ERROR_WORD:
                 error_num++;
-                fprintf(msg,"%s is illegal number,at %d line %d column\n",dual[pos].lexme.lexme_text,dual[pos].x,dual[pos].y);
-                printf("%s is illegal number,at %d line %d column\n",dual[pos].lexme.lexme_text,dual[pos].x,dual[pos].y);
+                fprintf(msg,"Error type[词法错误]: at %d line %d column , %s 不是正确的数字\n",dual[pos].x,dual[pos].y,dual[pos].lexme.lexme_text);
+                printf("Error type[词法错误]: at %d line %d column , %s 不是正确的数字\n",dual[pos].x,dual[pos].y,dual[pos].lexme.lexme_text);
                 break;
             case OUT_OF_RANGE:
                 error_num++;
-                fprintf(msg,"%s is out of range, at %d line %d column\n",dual[pos].lexme.lexme_text,dual[pos].x,dual[pos].y);
-                printf("%s is out of range, at %d line %d column\n",dual[pos].lexme.lexme_text,dual[pos].x,dual[pos].y);
+                fprintf(msg,"Error type[词法错误]: at %d line %d column , %s 超出了规定范围\n",dual[pos].x,dual[pos].y,dual[pos].lexme.lexme_text);
+                printf("Error type[词法错误]: at %d line %d column , %s 超出了规定范围\n",dual[pos].x,dual[pos].y,dual[pos].lexme.lexme_text);
                 break;
             default:
                 fprintf(msg,"(%s , %d),at %d line %d column\n",dual[pos].lexme.lexme_text,dual[pos].dual_type,dual[pos].x,dual[pos].y);
@@ -351,8 +349,8 @@ int Scanner()
                 if(now != '}'){
                     fclose(fp);
                     error_num++;
-                    fprintf(msg,"lack of '}' at %d line %d column\n",dual[pos].x,dual[pos].y);
-                    printf("lack of '}' at %d line %d column\n",dual[pos].x,dual[pos].y);
+                    fprintf(msg,"Error type[词法错误]: at %d line %d column , 缺少 '}' \n",dual[pos].x,dual[pos].y);
+                    printf("Error type[词法错误]: at %d line %d column , 缺少 '}'\n",dual[pos].x,dual[pos].y);
                     fclose(msg);
                     return error_num;
                 }
@@ -390,8 +388,8 @@ int Scanner()
             dual[pos].dual_type = ERROR_WORD;
             dual[pos].x = row;
             dual[pos].y = col++;
-            fprintf(msg,"%s is a illegel string, at %d line %d column\n",dual[pos].lexme.lexme_text,dual[pos].x,dual[pos].y);
-            printf("%s is a illegel string, at %d line %d column\n",dual[pos].lexme.lexme_text,dual[pos].x,dual[pos].y);
+            fprintf(msg,"Error type[词法错误]: at %d line %d column , %s 是一个非法字符\n",dual[pos].x,dual[pos].y,dual[pos].lexme.lexme_text);
+            printf("Error type[词法错误]: at %d line %d column , %s 是一个非法字符\n",dual[pos].x,dual[pos].y,dual[pos].lexme.lexme_text);
         }
     }
     fclose(fp);
