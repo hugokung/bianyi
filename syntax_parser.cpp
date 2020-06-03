@@ -343,13 +343,13 @@ int Condition(){
         }
         if(dual[index].dual_type == ELSE){
             Gen("jumpto","_","_","");
-            tmp2 = NXQ -1;
+            tmp2 = NXQ -1;              //tmp2记录then后面的最后一条语句的四元式标号
             printf("ELSE\n");
             index++;
-            tmp1 = NXQ;
+            tmp1 = NXQ;                 //tmp1记录假出口的跳转的四元式的标号
             // itoa(tmp1,tmp,10);
             sprintf(tmp,"%d",tmp1);
-            strcpy(four[FC].res,tmp);
+            strcpy(four[FC].res,tmp);       //回填假出口
 
             if(Singel_stament()==1){
                 return 1;
@@ -357,7 +357,7 @@ int Condition(){
             tmp1 = NXQ;
             // itoa(tmp1, tmp, 10);
             sprintf(tmp,"%d",tmp1);
-            strcpy(four[tmp2].res, tmp);
+            strcpy(four[tmp2].res, tmp);        //记录当为真时的语句执行完之后应该跳转到的四元式标号
         }
         else{
             printf("line %d: 缺少关键字ELSE\n",dual[index].x);
@@ -392,12 +392,12 @@ int Whiled(){
 
         // itoa(tmp2,tmp,10);
         sprintf(tmp,"%d",tmp2);
-        Gen("jumpto","_","_",tmp);
+        Gen("jumpto","_","_",tmp);          //跳转回循环语句的条件判断处的四元式
 
-        tmp1 = NXQ;
+        tmp1 = NXQ;                         //记录假出口的标号
         // itoa(tmp1,tmp,10);
         sprintf(tmp,"%d",tmp1);
-        strcpy(four[FC].res,tmp);
+        strcpy(four[FC].res,tmp);           //回填假出口
     }
     else{
         printf("line %d: 缺少关键字DO\n",dual[index].x);
