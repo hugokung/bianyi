@@ -27,7 +27,7 @@
 ## First集
 
 first(<程序>) = {'PROGRAM'}  
-first(<分程序>) = {'VAR'}  
+first(<分程序>) = {'VAR','BEGIN'}  
 first(<变量说明>) = {'VAR'}  
 first(<变量说明表>) = {字母}  
 first(<类型>) = {'INTEGER'}  
